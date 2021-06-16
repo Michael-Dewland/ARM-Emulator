@@ -5,8 +5,6 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
 
-
-
         // B<condition> <label> simplified to B<condition> <line No.>
         // label removed from code
         String source_code = """
@@ -19,9 +17,9 @@ halt
 
         ArrayList<String> instructions = new ArrayList<>(Arrays.asList(source_code.split("\n")));
 
+        // create instance and initialise
         Emulator em = new Emulator();
 
-        em.initialise();
         em.set_instructions(instructions);
 
         //em.display_registers();
@@ -33,6 +31,5 @@ halt
 
         em.display_registers();
         em.display_main_memory();
-
     }
 }
