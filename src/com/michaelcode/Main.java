@@ -34,17 +34,5 @@ halt
         em.display_registers();
         em.display_main_memory();
 
-
-
-        /*
-        available types:
-
-        - if <x> <operator> <y>
-        - for <x> times
-        - while <x> <operator> <y>
-
-         */
-
-        //CodeStructure cs = new CodeStructure("if");
     }
 }
