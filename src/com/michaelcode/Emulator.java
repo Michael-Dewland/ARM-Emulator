@@ -14,11 +14,7 @@ public class Emulator {
     private int PC = 0;
     private String SR = "";
 
-    public static void main(String[] args) {
-        // no initialisation needed
-    }
-
-    public void initialise() {
+    public Emulator() {
         clear_main_memory();
         setup_registers();
         setup_mainmemory();
@@ -29,7 +25,6 @@ public class Emulator {
             mainMemory.add(0);
         }
     }
-
     private void setup_registers() {
         for (int i = 0; i < 13; i++) {
             registers.add(0);
@@ -46,7 +41,6 @@ public class Emulator {
             System.out.println(" -> " + registers.get(i));
         }
     }
-
     public void display_main_memory() {
         System.out.println("Mem   Val");
         for (int i = 0; i < mainMemory.size(); i++) {
@@ -56,6 +50,9 @@ public class Emulator {
             System.out.print(i);
             System.out.println(" -> " + mainMemory.get(i));
         }
+    }
+    public void clear_main_memory() {
+        programMemory.clear();
     }
 
     public void increment() {
@@ -89,9 +86,6 @@ public class Emulator {
         programMemory = instructions;
     }
 
-    public void clear_main_memory() {
-        programMemory.clear();
-    }
 
     public void execute_next() {
         // current_instruction not converted to lower as branch instructions are case-sensitive
@@ -155,7 +149,6 @@ public class Emulator {
 
         return Integer.parseInt(operand);
     }
-
     private int get_register_num(String operand) {
         return Integer.parseInt(operand.trim().substring(1));
     }
@@ -205,10 +198,10 @@ public class Emulator {
     }
     private void B(String condition, int line_number) {
         switch (condition) {
-            case "eq" -> {if (SR.equals("eq"))                    {B(line_number);}}
+            case "eq" -> {if (                   SR.equals("eq")) {B(line_number);}}
             case "ne" -> {if (SR.equals("gt") || SR.equals("lt")) {B(line_number);}}
-            case "gt" -> {if (SR.equals("gt"))                    {B(line_number);}}
-            case "lt" -> {if (SR.equals("lt"))                    {B(line_number);}}
+            case "gt" -> {if (                   SR.equals("gt")) {B(line_number);}}
+            case "lt" -> {if (                   SR.equals("lt")) {B(line_number);}}
         }
     }
 
