@@ -200,15 +200,15 @@ public class Emulator {
         SR = status;
     }
 
-    private void B(                  int label) {
-        jump_to(label);
+    private void B(                  int line_number) {
+        jump_to(line_number);
     }
-    private void B(String condition, int label) {
+    private void B(String condition, int line_number) {
         switch (condition) {
-            case "eq" -> {if (SR.equals("eq")) {B(label);}}
-            case "ne" -> {if (SR.equals("gt") || SR.equals("lt")) {B(label);}}
-            case "gt" -> {if (SR.equals("gt")) {B(label);}}
-            case "lt" -> {if (SR.equals("lt")) {B(label);}}
+            case "eq" -> {if (SR.equals("eq"))                    {B(line_number);}}
+            case "ne" -> {if (SR.equals("gt") || SR.equals("lt")) {B(line_number);}}
+            case "gt" -> {if (SR.equals("gt"))                    {B(line_number);}}
+            case "lt" -> {if (SR.equals("lt"))                    {B(line_number);}}
         }
     }
 
