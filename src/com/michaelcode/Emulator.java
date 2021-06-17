@@ -4,8 +4,11 @@ import java.util.*;
 
 public class Emulator {
 
-    // 64 lines of main memory are reserved for instructions
-    // next 16 lines are reserved for
+    // 12 general purpose registers
+    // 32 cells for main memory
+    // Program counter
+    // Status register
+
     private ArrayList<String> programMemory = new ArrayList<>();
     private final ArrayList<Integer> mainMemory = new ArrayList<>();
     private final ArrayList<Integer> registers = new ArrayList<>();
@@ -32,6 +35,7 @@ public class Emulator {
     }
 
     public void display_registers() {
+        System.out.println("Reg     Val");
         for (int i = 0; i < registers.size(); i++) {
             System.out.print("R ");
             for (int j = 0; j < 2 - Integer.toString(i).length(); j++) {
@@ -57,10 +61,14 @@ public class Emulator {
 
     public void increment() {
         PC++;
+        if (PC >= programMemory.size() && !is_halted()) {
+            HALT();
+        }
     }
 
     public void set_instructions(ArrayList<String> instructions) {
         clear_main_memory();
+        /*
         for (int i = 0; i < instructions.size(); i++) {
 
             if (instructions.get(instructions.size() - (i + 1)).endsWith(":")) {
@@ -83,9 +91,9 @@ public class Emulator {
                 }
             }
         }
+        */
         programMemory = instructions;
     }
-
 
     public void execute_next() {
         // current_instruction not converted to lower as branch instructions are case-sensitive
@@ -94,19 +102,24 @@ public class Emulator {
         if (current_instruction.equals("") || current_instruction.startsWith(";")) {
             return;
         }
+        System.out.print("PC: ");
 
-        System.out.println("Running instruction [" + current_instruction + "]");
+        for (int i = 0; i < Integer.toString(programMemory.size()).length() - Integer.toString(PC).length(); i++) {
+            System.out.print(" ");
+        }
+
+        System.out.println(PC + " - Executing instruction [" + current_instruction + "]");
 
         // see if branch operation
 
         if (current_instruction.toLowerCase().startsWith("b ")) {
-            B(get_value(current_instruction.toLowerCase().substring(2)));
+            B(current_instruction.toLowerCase().substring(2));
         } else if (current_instruction.toLowerCase().charAt(0) == 'b') {
             switch (current_instruction.toLowerCase().substring(0, 4)) {
-                case "beq " -> B("eq", get_value(current_instruction.substring(4)));
-                case "bne " -> B("ne", get_value(current_instruction.substring(4)));
-                case "bgt " -> B("gt", get_value(current_instruction.substring(4)));
-                case "blt " -> B("lt", get_value(current_instruction.substring(4)));
+                case "beq " -> B("eq", current_instruction.substring(4));
+                case "bne " -> B("ne", current_instruction.substring(4));
+                case "bgt " -> B("gt", current_instruction.substring(4));
+                case "blt " -> B("lt", current_instruction.substring(4));
             }
         } else {
 
@@ -153,8 +166,8 @@ public class Emulator {
         return Integer.parseInt(operand.trim().substring(1));
     }
 
-    private void jump_to(int line) {
-        PC = line;
+    private void jump_to(String label) {
+        PC = programMemory.indexOf(label + ":");
     }
 
     // instructions
@@ -193,15 +206,15 @@ public class Emulator {
         SR = status;
     }
 
-    private void B(                  int line_number) {
-        jump_to(line_number);
+    private void B(                  String label) {
+        jump_to(label);
     }
-    private void B(String condition, int line_number) {
+    private void B(String condition, String label) {
         switch (condition) {
-            case "eq" -> {if (                   SR.equals("eq")) {B(line_number);}}
-            case "ne" -> {if (SR.equals("gt") || SR.equals("lt")) {B(line_number);}}
-            case "gt" -> {if (                   SR.equals("gt")) {B(line_number);}}
-            case "lt" -> {if (                   SR.equals("lt")) {B(line_number);}}
+            case "eq" -> {if (                   SR.equals("eq")) {B(label);}}
+            case "ne" -> {if (SR.equals("gt") || SR.equals("lt")) {B(label);}}
+            case "gt" -> {if (                   SR.equals("gt")) {B(label);}}
+            case "lt" -> {if (                   SR.equals("lt")) {B(label);}}
         }
     }
 
@@ -227,6 +240,7 @@ public class Emulator {
     } // RIGHT SHIFT
 
     private void HALT() {
+        System.out.println("Halting");
         halted = true;
     } // HALT PROGRAM
 
